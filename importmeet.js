@@ -163,13 +163,15 @@ async function getConfirmation(prompt)
             }
         }
         query = pgp.helpers.insert(results, cols);
-        t.query(query);
-    }).catch(err => {
-        console.log("Database rolled back with message:");
-        console.log(err);
+        return t.query(query);
     }).then(result => {
-        console.log("Meet imported successfully with message:");
-        console.log(result);
+        console.log("Meet imported successfully.");
+        console.log(`It should now be safe to delete the ${cmd[0]} file`);
+        console.log("and to clear the google sheet in preparation for the next meet.");
+    }, err => {
+        console.error("Database rolled back with message:");
+        console.error(err);
+        console.error("No changes were made to the database");
     });
 })().catch(err => {
     console.log("Encountered unexpected error:");
