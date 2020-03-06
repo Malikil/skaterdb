@@ -1,7 +1,8 @@
 {
     "distances": {
         "1": "Circle",
-        "2": "Candy Cane"
+        "2": "Candy Cane",
+        "3": "Counter Clockwise"
     },
     "place": {
         "0": "ADV"
