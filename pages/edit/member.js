@@ -17,8 +17,8 @@ export default function EditMember(props) {
             let queryArr = query.toLowerCase().split(' ');
             // Filter the array
             setResults(props.members.filter(m => {
-                let name = `${m.fname} ${m.lname}`.toLowerCase();
-                return queryArr.every(q => name.includes(q));
+                let searchable = `${m.fname} ${m.lname} ${m.sscid}`.toLowerCase();
+                return queryArr.every(q => searchable.includes(q));
             }));
         }
         else
@@ -34,13 +34,17 @@ export default function EditMember(props) {
             <input type='button' value='Add New Member' />
         </Link>
     </Layout>
-}
+};
 
 export async function getServerSideProps() {
     let members = await db.getMembers();
     return {
         props: {
-            members
+            members: members.map(m => ({
+                fname: m.fname,
+                lname: m.lname,
+                sscid: m.sscid
+            }))
         }
-    }
-}
+    };
+};

@@ -25,3 +25,4 @@ Object.defineProperty(singleton, "instance", {
 Object.freeze(singleton);
 
 module.exports = singleton;
+

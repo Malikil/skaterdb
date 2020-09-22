@@ -8,7 +8,7 @@ const style = {
 }
 
 const MemberTile = props => <div style={style}>
-    <Link href={`/edit/member/${props.member.sscid}`}>
+    <Link href="/edit/member/[sscid]" as={`/edit/member/${props.member.sscid}`}>
         <a>{props.member.sscid}</a>
     </Link><br />
     <b>{props.member.fname} {props.member.lname}</b>
