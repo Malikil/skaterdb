@@ -1,4 +1,5 @@
 import Layout from '../components/Layout';
+import Link from 'next/link';
 import fs from 'fs';
 import path from 'path';
 
@@ -11,7 +12,7 @@ export default function Index(props) {
                 <thead>
                     <tr>
                         <th>Reports</th>
-                        <th>Add Data</th>
+                        <th>Add/Edit Data</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,14 +21,22 @@ export default function Index(props) {
                             <ul>
                                 {props.reports.map(report => (
                                     <li key={report}>
-                                        <a href={`/reports/${report}`}>{report}</a>
+                                        <Link href={`/reports/${report}`}>
+                                            <a>{report}</a>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>
                         </td>
                         <td>
                             <ul>
-                                <li>Nothing here</li>
+                                {props.edits.map(edit => (
+                                    <li key={edit}>
+                                        <Link href={`/edit/${edit}`}>
+                                            <a>{edit}</a>
+                                        </Link>
+                                    </li>
+                                ))}
                             </ul>
                         </td>
                     </tr>
@@ -45,9 +54,17 @@ export async function getStaticProps() {
         return arr;
     }, []);
 
+    const editsDir = path.join(process.cwd(), 'pages/edit/');
+    const edits = fs.readdirSync(editsDir).reduce((arr, file) => {
+        if (file.endsWith('.js'))
+            arr.push(file.slice(0, -3));
+        return arr;
+    }, []);
+
     return {
         props: {
-            reports
+            reports,
+            edits
         }
     };
 }

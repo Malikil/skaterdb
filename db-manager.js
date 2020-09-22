@@ -1,10 +1,8 @@
-const db = require('./pg-connection').instance;
+import { instance as db } from './pg-connection';
 
-async function getMembers(year) {
+async function getMembers() {
     let result = await db.many(
-        'SELECT members.*, season, prog FROM members ' +
-        'INNER JOIN memseasons ON memseasons.member = members.sscid ' +
-        'WHERE season = 2019'
+        'SELECT * FROM members'
     );
     return result;
 }

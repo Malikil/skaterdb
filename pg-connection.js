@@ -1,3 +1,5 @@
+const pgPromise = require('pg-promise');
+
 const pgp = require('pg-promise')({
     capSQL: true
 });
