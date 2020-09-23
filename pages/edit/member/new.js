@@ -22,6 +22,8 @@ export default function NewMember(props) {
 
     const handleChange = e =>
         setMember({ ...member, [e.target.name]: e.target.value });
+    const checkboxChange = e =>
+        setMember({ ...member, [e.target.name]: e.target.checked });
 
     const handleSubmit = async e => {
         e.preventDefault();
@@ -96,7 +98,7 @@ export default function NewMember(props) {
                     value={member.dob} onChange={handleChange} required /><br />
                 <label htmlFor="work_burn">Works in Burnaby: </label>
                 <input type="checkbox" id="work_burn" name="work_burn"
-                    value={member.work_burn} onChange={handleChange} /><br />
+                    checked={!!member.work_burn} onChange={checkboxChange} /><br />
                 <div style={{display: "inline-block"}}>
                     <label htmlFor="notes">Notes: </label><br />
                     <textarea id="notes" name="notes" rows="5" cols="20" maxLength="100"
