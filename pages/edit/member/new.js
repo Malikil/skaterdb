@@ -1,7 +1,6 @@
 import Layout from '../../../components/Layout';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { inspect } from 'util';
 
 export default function NewMember(props) {
     const router = useRouter();
@@ -95,7 +94,7 @@ export default function NewMember(props) {
                 <label htmlFor="dob">Date of birth: </label>
                 <input type="date" id="dob" name="dob"
                     value={member.dob} onChange={handleChange} required /><br />
-                <label htmlFor="work_burn">Works in burnaby: </label>
+                <label htmlFor="work_burn">Works in Burnaby: </label>
                 <input type="checkbox" id="work_burn" name="work_burn"
                     value={member.work_burn} onChange={handleChange} /><br />
                 <div style={{display: "inline-block"}}>

@@ -42,7 +42,27 @@ async function addMember(member) {
     ]);
 }
 
+/**
+ * @param {number} sscid 
+ */
+async function getMemberByID(sscid) {
+    let query = `SELECT members.*, json_agg(json_build_object(
+        'season', season,
+        'prog', prog,
+        'full_time', full_time,
+        'renting', renting
+    )) AS seasons FROM members
+    INNER JOIN memseasons ms ON ms.member = members.sscid
+    WHERE sscid = $1 GROUP BY
+        sscid, fname, lname, address, city, post_code,
+        phone, phone2, email, dob, gender, notes, work_burn`;
+
+    let result = await db.oneOrNone(query, [sscid]);
+    return result;
+}
+
 export default {
     getMembers,
-    addMember
+    addMember,
+    getMemberByID
 };
