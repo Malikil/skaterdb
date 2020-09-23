@@ -1,13 +1,16 @@
 import db from '../../db-manager';
 
 export default (req, res) => {
-    res.statusCode = 500;
+    console.log(req.body);
+    // Insert the member, updating an existing member if they're already here
+    db.addMember(req.body);
+    res.statusCode = 201;
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Location', `/pages/edit/member/${101054}`);
+    res.setHeader('Location', `/pages/edit/member/${req.body.sscid}`);
     res.end(JSON.stringify({
-        sscid: 101054,
+        sscid: req.body.sscid,
         locations: [
-            `/pages/edit/member/${101054}`
+            `/pages/edit/member/${req.body.sscid}`
         ]
     }));
 };

@@ -27,14 +27,32 @@ export default function NewMember(props) {
 
     const handleSubmit = async e => {
         e.preventDefault();
+        // Validate data
+        let dob = member.dob.split('-');
+        dob[1] -= 1; // Someone thought months should be zero indexed but nothing else lmao
+        let adding = {
+            ...member,
+            sscid: parseInt(member.sscid),
+            dob: new Date(...dob)
+        };
+        if (!adding.sscid)
+            return alert("SSCID is invalid");
+        if (adding.city == "Burnaby")
+            delete adding.work_burn;
+        if (!adding.notes)
+            delete adding.notes;
+        if (!adding.phone2)
+            delete adding.phone2;
+        if (!adding.email)
+            delete adding.email;
+        // Make request
         try
         {
             const res = await fetch(`http://${process.env.NEXT_PUBLIC_OWN_IP}/api/new-member`, {
                 method: 'PUT',
-                body: JSON.stringify(member),
+                body: JSON.stringify(adding),
                 headers: { 'Content-Type': 'application/json' }
             });
-            
             const json = await res.json();
             console.log(json);
             if (res.status === 201)
