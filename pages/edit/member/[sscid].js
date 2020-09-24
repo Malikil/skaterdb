@@ -3,6 +3,7 @@ import db from '../../../db-manager';
 import { useState } from 'react';
 import EditableSeason from '../../../components/EditableSeason';
 import Error from 'next/error';
+import Link from 'next/link';
 
 export default function EditMember(props) {
     // If the member wasn't found, return an error
@@ -123,7 +124,10 @@ export default function EditMember(props) {
                                 </div>
                             </div>
                             <br /><br />
-                            <button type="submit">Update Member</button>
+                            <button type="submit">Update Member</button>&emsp;
+                            <Link href={`/edit/member/new?prefill=${member.sscid}`}>
+                                <button type="button">Duplicate Member</button>
+                            </Link>
                         </td>
                         <td style={tableStyle}>
                             <table>
@@ -150,7 +154,7 @@ export default function EditMember(props) {
             </table>
         </form>
     </Layout>;
-}
+};
 
 export async function getServerSideProps(context) {
     console.log(context.query);
@@ -177,4 +181,4 @@ export async function getServerSideProps(context) {
             redirect: !!context.query.redirect
         }
     };
-}
+};

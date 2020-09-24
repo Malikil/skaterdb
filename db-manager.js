@@ -51,15 +51,8 @@ async function addMember(member) {
     // Construct the insert query
     let query = 'INSERT INTO members(sscid, fname, lname, address, city, post_code, phone, dob, gender' +
         `${paramStr}) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9${valStr}) ` +
-        "ON CONFLICT ON CONSTRAINT Members_pkey DO UPDATE SET " +
-        "fname = $2, lname = $3, address = $4, city = $5, post_code = $6, phone = $7, dob = $8, gender = $9";
-    [ "phone2", "email", "notes", "work_burn" ].forEach((key, i) => {
-        if (member[key])
-            query += `, ${key} = $${i + 10}`;
-    });
-    query += " WHERE sscid = $1";
-    console.log(query);
-    //db.query(query, values);
+        "ON CONFLICT ON CONSTRAINT members_pkey DO NOTHING RETURNING sscid";
+    return db.query(query, values);
 }
 
 async function updateMember(member) {

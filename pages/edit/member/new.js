@@ -1,24 +1,11 @@
 import Layout from '../../../components/Layout';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import db from '../../../db-manager';
 
 export default function NewMember(props) {
     const router = useRouter();
-    const [member, setMember] = useState({
-        sscid: '',
-        fname: '',
-        lname: '',
-        address: '',
-        city: '',
-        post_code: '',
-        phone: '',
-        phone2: '',
-        email: '',
-        dob: '',
-        gender: '',
-        notes: '',
-        work_burn: false
-    });
+    const [member, setMember] = useState(props.member);
 
     const handleChange = e =>
         setMember({ ...member, [e.target.name]: e.target.value });
@@ -54,13 +41,12 @@ export default function NewMember(props) {
                 headers: { 'Content-Type': 'application/json' }
             });
             const json = await res.json();
-            console.log(json);
             if (res.status === 201)
                 // Redirect to the member's edit page
                 router.push(`/pages/edit/member/${json.sscid}?redirect=true`);
             else
                 // Failed to add member
-                alert("Member could not be added");
+                alert("Couldn't add member, SSCID already exists");
         }
         catch (err)
         {
@@ -132,4 +118,43 @@ export default function NewMember(props) {
             </form>
         </div>
     </Layout>;
-}
+};
+
+export async function getServerSideProps(context) {
+    const props = {
+        member: {
+            sscid: '',
+            fname: '',
+            lname: '',
+            address: '',
+            city: '',
+            post_code: '',
+            phone: '',
+            phone2: '',
+            email: '',
+            dob: '',
+            gender: '',
+            notes: '',
+            work_burn: false
+        }
+    };
+    if (context.query.prefill)
+    {
+        const member = await db.getMemberByID(context.query.prefill);
+        if (!member)
+            return { props };
+        
+        let dob = `${member.dob.getFullYear()}-${
+            (member.dob.getMonth() < 9 ? '0' : '') + (member.dob.getMonth() + 1)
+        }-${(member.dob.getDate() < 10 ? '0' : '') + member.dob.getDate()}`;
+
+        props.member = {
+            ...member,
+            dob,
+            phone2: (member.phone2 || ''),
+            email: (member.email || ''),
+            notes: (member.notes || '')
+        };
+    }
+    return { props };
+};
