@@ -57,7 +57,41 @@ export default function EditMember(props) {
 
     const handleSubmit = async e => {
         e.preventDefault();
-        console.log("Updating member");
+        // Validate data
+        let dob = member.dob.split('-');
+        dob[1] -= 1; // Someone thought months should be zero indexed but nothing else lmao
+        let updating = {
+            ...member,
+            sscid: parseInt(member.sscid),
+            dob: new Date(...dob)
+        };
+        if (!updating.sscid)
+            return alert("SSCID is invalid");
+        if (updating.city == "Burnaby")
+            delete updating.work_burn;
+        if (!updating.notes)
+            delete updating.notes;
+        if (!updating.phone2)
+            delete updating.phone2;
+        if (!updating.email)
+            delete updating.email;
+        // Make request
+        try
+        {
+            let result = await fetch(`http://${process.env.NEXT_PUBLIC_OWN_IP}/api/update-member`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    sscid: props.member.sscid,
+                    data: updating
+                }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+        catch (err)
+        {
+            console.log(err);
+            alert("Something went wrong internally, member could not be updated");
+        }
     };
 
     const tableStyle = {
@@ -157,7 +191,6 @@ export default function EditMember(props) {
 };
 
 export async function getServerSideProps(context) {
-    console.log(context.query);
     const { sscid } = context.query;
     // Get member information based on sscid
     const member = await db.getMemberByID(parseInt(sscid));
