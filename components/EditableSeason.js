@@ -1,5 +1,11 @@
+import { useState } from 'react'
+
 export default function EditableSeason(props) {
     const { season, onChange } = props;
+
+    const [ year, setYear ] = useState(season.season);
+
+    const updateYear = e => setYear(e.target.value);
 
     const handleChange = e => onChange({
         event: e,
@@ -9,11 +15,12 @@ export default function EditableSeason(props) {
     return <tr>
         <td>
             <input type="text" name="season"
-                value={season.season} onChange={handleChange} />
+                value={year} onChange={updateYear} onBlur={handleChange} />
         </td>
         <td>
-            <input type="text" name="prog"
-                value={season.prog} onChange={handleChange} />
+            <select name="prog" value={season.prog} onChange={handleChange}>
+                {props.programList.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
         </td>
         <td style={{textAlign: "center"}}>
             <input type="checkbox" name="full_time"

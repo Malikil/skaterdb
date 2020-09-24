@@ -85,9 +85,16 @@ async function getMemberByID(sscid) {
     return result;
 }
 
+// ============================== Programs ==============================
+async function getProgramList() {
+    let result = await db.many("SELECT * FROM programs");
+    return result.map(p => p.pr_name);
+}
+
 export default {
     getMembers,
     addMember,
     updateMember,
-    getMemberByID
+    getMemberByID,
+    getProgramList
 };

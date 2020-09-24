@@ -2,23 +2,23 @@ import Layout from '../../../components/Layout';
 import db from '../../../db-manager';
 import { useState } from 'react';
 import EditableSeason from '../../../components/EditableSeason';
+import Error from 'next/error';
 
 export default function EditMember(props) {
+    // If the member wasn't found, return an error
+    if (!props.member)
+        return <Error statusCode={404} />;
+
     const [member, setMember] = useState(props.member);
-    const [updates, setUpdates] = useState({});
 
-    const handleChange = e => {
+    const handleChange = e =>
         setMember({ ...member, [e.target.name]: e.target.value });
-        // Track which fields have been updated. Based on if the value is different from original
-        setUpdates({ ...updates, [e.target.name]: (e.target.value !== props.member[e.target.name]) });
-    };
 
-    const checkboxChange = e => {
+    const checkboxChange = e =>
         setMember({ ...member, [e.target.name]: e.target.checked });
-        setUpdates({ ...updates, [e.target.name]: (e.target.value !== props.member[e.target.name]) });
-    };
 
-    const updateSeason = e => {
+    const updateSeason = e =>
+    {
         // Find the season to update
         setMember({
             ...member,
@@ -37,20 +37,22 @@ export default function EditMember(props) {
                     return s;
             })
         });
-        // Seasons being updated can be stored with the year as a key
-        setUpdates({
-            ...updates,
-            [e.source.season]: {
-                ...updates[e.source.season],
-                [e.event.target.name]: (
-                    e.event.target.type == "checkbox" ?
-                    e.event.target.checked :
-                    e.event.target.value
-                ) !== props.member.seasons.find(s => s.season == e.source.season)[e.event.target.name]
-            }
+        console.log(member);
+    }
+
+    const addSeason = () =>
+        setMember({
+            ...member,
+            seasons: [
+                ...member.seasons,
+                {
+                    season: '',
+                    prog: props.programs[0],
+                    full_time: false,
+                    renting: false
+                }
+            ]
         });
-        console.log(updates);
-    };
 
     const handleSubmit = async e => {
         e.preventDefault();
@@ -136,12 +138,12 @@ export default function EditMember(props) {
                                 <tbody>
                                     {member.seasons.map(season =>
                                         <EditableSeason key={season.season}
-                                            season={season}
+                                            season={season} programList={props.programs}
                                             onChange={updateSeason} />)}
                                 </tbody>
                             </table>
                             <br />
-                            <button>Add Season</button>
+                            <button type="button" onClick={addSeason}>Add Season</button>
                         </td>
                     </tr>
                 </tbody>
@@ -155,6 +157,11 @@ export async function getServerSideProps(context) {
     const { sscid } = context.query;
     // Get member information based on sscid
     const member = await db.getMemberByID(parseInt(sscid));
+    // Make sure the member exists, otherwise the page should be a 404
+    if (!member)
+        return { props: {} };
+    // Get a list of available programs
+    const programs = await db.getProgramList();
     // Possibly different based on if we were redirected from the new member page /shrug
     // Construct the date string so it can be used by the date picker element
     let dob = `${member.dob.getFullYear()}-${
@@ -166,6 +173,7 @@ export async function getServerSideProps(context) {
                 ...member,
                 dob
             },
+            programs,
             redirect: !!context.query.redirect
         }
     };
