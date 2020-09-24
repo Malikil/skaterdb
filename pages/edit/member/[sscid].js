@@ -19,7 +19,6 @@ export default function EditMember(props) {
         setMember({ ...member, [e.target.name]: e.target.checked });
 
     const updateSeason = e =>
-    {
         // Find the season to update
         setMember({
             ...member,
@@ -38,8 +37,6 @@ export default function EditMember(props) {
                     return s;
             })
         });
-        console.log(member);
-    }
 
     const addSeason = () =>
         setMember({
@@ -81,8 +78,8 @@ export default function EditMember(props) {
             let result = await fetch(`http://${process.env.NEXT_PUBLIC_OWN_IP}/api/update-member`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    sscid: props.member.sscid,
-                    data: updating
+                    original: props.member,
+                    updated: updating
                 }),
                 headers: { 'Content-Type': 'application/json' }
             });
