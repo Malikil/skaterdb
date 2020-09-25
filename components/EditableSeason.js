@@ -14,7 +14,7 @@ export default function EditableSeason(props) {
 
     return <tr>
         <td>
-            <input type="text" name="season"
+            <input type="text" name="season" required
                 value={year} onChange={updateYear} onBlur={handleChange} />
         </td>
         <td>

@@ -11,14 +11,19 @@ export default function EditMember(props) {
         return <Error statusCode={404} />;
 
     const [member, setMember] = useState(props.member);
+    const [updated, setUpdate] = useState("Update Member");
 
-    const handleChange = e =>
+    const handleChange = e => {
         setMember({ ...member, [e.target.name]: e.target.value });
+        setUpdate("Update Member");
+    }
 
-    const checkboxChange = e =>
+    const checkboxChange = e => {
         setMember({ ...member, [e.target.name]: e.target.checked });
+        setUpdate("Update Member");
+    }
 
-    const updateSeason = e =>
+    const updateSeason = e => {
         // Find the season to update
         setMember({
             ...member,
@@ -35,10 +40,12 @@ export default function EditMember(props) {
                     };
                 else
                     return s;
-            })
+            }).sort((a, b) => b.season - a.season)
         });
+        setUpdate("Update Member");
+    }
 
-    const addSeason = () =>
+    const addSeason = () => {
         setMember({
             ...member,
             seasons: [
@@ -51,6 +58,8 @@ export default function EditMember(props) {
                 }
             ]
         });
+        setUpdate("Update Member");
+    }
 
     const handleSubmit = async e => {
         e.preventDefault();
@@ -60,9 +69,13 @@ export default function EditMember(props) {
         let updating = {
             ...member,
             sscid: parseInt(member.sscid),
-            dob: new Date(...dob)
+            dob: new Date(...dob),
+            seasons: member.seasons.map(season => ({
+                ...season,
+                season: parseInt(season.season),
+            }))
         };
-        if (!updating.sscid)
+        if (!updating.sscid || updating.seasons.find(s => !s.seasons))
             return alert("SSCID is invalid");
         if (updating.city == "Burnaby")
             delete updating.work_burn;
@@ -78,11 +91,18 @@ export default function EditMember(props) {
             let result = await fetch(`http://${process.env.NEXT_PUBLIC_OWN_IP}/api/update-member`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    original: props.member,
-                    updated: updating
+                    sscid: props.member.sscid,
+                    member: updating
                 }),
                 headers: { 'Content-Type': 'application/json' }
             });
+            if (result.status === 202)
+                setUpdate("Updated!");
+            else
+            {
+                alert("Something went wrong internally, member could not be updated");
+                console.log(result);
+            }
         }
         catch (err)
         {
@@ -155,7 +175,7 @@ export default function EditMember(props) {
                                 </div>
                             </div>
                             <br /><br />
-                            <button type="submit">Update Member</button>&emsp;
+                            <button type="submit">{updated}</button>&emsp;
                             <Link href={`/edit/member/new?prefill=${member.sscid}`}>
                                 <button type="button">Duplicate Member</button>
                             </Link>
