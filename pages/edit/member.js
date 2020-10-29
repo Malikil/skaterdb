@@ -1,6 +1,6 @@
 import Layout from '../../components/Layout';
 import Link from 'next/link';
-import db from '../../db-manager';
+import { getMembers } from '../../db-manager';
 import MemberTile from '../../components/MemberTile';
 import { useCallback, useState } from 'react';
 
@@ -37,7 +37,7 @@ export default function EditMember(props) {
 };
 
 export async function getServerSideProps() {
-    let members = await db.getMembers();
+    let members = await getMembers();
     return {
         props: {
             members: members.map(m => ({

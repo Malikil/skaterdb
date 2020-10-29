@@ -17,7 +17,7 @@ export default function Index(props) {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>
+                        <td style={{verticalAlign: 'top'}}>
                             <ul>
                                 {props.reports.map(report => (
                                     <li key={report}>
@@ -28,7 +28,7 @@ export default function Index(props) {
                                 ))}
                             </ul>
                         </td>
-                        <td>
+                        <td style={{verticalAlign: 'top'}}>
                             <ul>
                                 {props.edits.map(edit => (
                                     <li key={edit}>

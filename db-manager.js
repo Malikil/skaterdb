@@ -1,10 +1,18 @@
 import { instance as db } from './pg-connection';
 
 // ============================== Members ==============================
-async function getMembers() {
+export async function getMembers() {
     let result = await db.many(
         'SELECT * FROM members'
     );
+    return result;
+}
+
+export async function getMembersBySeason(season) {
+    let query = `SELECT * FROM members
+        INNER JOIN memseasons ms ON ms.member = members.sscid
+        WHERE ms.season = $1`;
+    let result = await db.many(query, [season]);
     return result;
 }
 
@@ -25,7 +33,7 @@ async function getMembers() {
  *  work_burn?: boolean
  * }} member 
  */
-async function addMember(member) {
+export async function addMember(member) {
     // Construct the parameter list and values list for optional items
     var paramStr = '';
     var valStr = '';
@@ -58,7 +66,7 @@ async function addMember(member) {
 /**
  * @param {number} sscid 
  */
-async function getMemberByID(sscid) {
+export async function getMemberByID(sscid) {
     let query = `SELECT members.*, json_agg(json_build_object(
         'season', season,
         'prog', prog,
@@ -98,7 +106,7 @@ async function getMemberByID(sscid) {
  * }} member 
  * @param {number} oldid
  */
-async function updateMember(member, oldid) {
+export async function updateMember(member, oldid) {
     return db.tx(async t => {
         // Update the member info using the old id
         var queryStr = '';
@@ -187,15 +195,16 @@ async function updateMember(member, oldid) {
 }
 
 // ============================== Programs ==============================
-async function getProgramList() {
+export async function getProgramList() {
     let result = await db.many("SELECT * FROM programs");
     return result.map(p => p.pr_name);
 }
 
-export default {
+/*export default {
     getMembers,
+    getMembersBySeason,
     addMember,
     updateMember,
     getMemberByID,
     getProgramList
-};
+};*/

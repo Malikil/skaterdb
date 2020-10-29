@@ -1,6 +1,6 @@
 import Layout from '../../components/Layout';
 import DbTable from '../../components/DbTable';
-import db from '../../db-manager';
+import { getMembers } from '../../db-manager';
 
 export default function CurrentMembers(props) {
     return (
@@ -12,7 +12,7 @@ export default function CurrentMembers(props) {
 }
 
 export async function getServerSideProps() {
-    let members = await db.getMembers();
+    let members = await getMembers();
     let headers = Object.keys(members[0]);
     return {
         props: {

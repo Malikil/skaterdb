@@ -1,8 +1,8 @@
-import db from '../../db-manager';
+import { addMember } from '../../db-manager';
 
 export default async (req, res) => {
     // Insert the member
-    let added = await db.addMember(req.body);
+    let added = await addMember(req.body);
     if (added[0])
     {
         res.statusCode = 201;

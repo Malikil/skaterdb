@@ -1,4 +1,4 @@
-import db from '../../db-manager';
+import { updateMember } from '../../db-manager';
 
 export default async (req, res) => {
     console.log(req.body.sscid);
@@ -6,7 +6,7 @@ export default async (req, res) => {
     // Update the member and programs
     try
     {
-        let result = await db.updateMember(req.body.member, req.body.sscid);
+        let result = await updateMember(req.body.member, req.body.sscid);
         if (result.ok)
         {
             res.statusCode = 202;

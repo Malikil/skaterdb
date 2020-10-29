@@ -1,7 +1,7 @@
 import Layout from '../../../components/Layout';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import db from '../../../db-manager';
+import { getMemberByID } from '../../../db-manager';
 
 export default function NewMember(props) {
     const router = useRouter();
@@ -140,7 +140,7 @@ export async function getServerSideProps(context) {
     };
     if (context.query.prefill)
     {
-        const member = await db.getMemberByID(context.query.prefill);
+        const member = await getMemberByID(context.query.prefill);
         if (!member)
             return { props };
         

@@ -1,5 +1,5 @@
 import Layout from '../../../components/Layout';
-import db from '../../../db-manager';
+import { getMemberByID, getProgramList } from '../../../db-manager';
 import { useState } from 'react';
 import EditableSeason from '../../../components/EditableSeason';
 import Error from 'next/error';
@@ -210,12 +210,12 @@ export default function EditMember(props) {
 export async function getServerSideProps(context) {
     const { sscid } = context.query;
     // Get member information based on sscid
-    const member = await db.getMemberByID(parseInt(sscid));
+    const member = await getMemberByID(parseInt(sscid));
     // Make sure the member exists, otherwise the page should be a 404
     if (!member)
         return { props: {} };
     // Get a list of available programs
-    const programs = await db.getProgramList();
+    const programs = await getProgramList();
     // Possibly different based on if we were redirected from the new member page /shrug
     // Construct the date string so it can be used by the date picker element
     let dob = `${member.dob.getFullYear()}-${
